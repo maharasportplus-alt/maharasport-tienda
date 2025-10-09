@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>MAHARA SPORT - Tienda de Moda Masculina</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #ff0000;
+            --accent-color: #8338ec;
+            --light-bg: #f8f9fa;
+            --dark-text: #2b2d42;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--dark-text);
+            background-color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Responsive */
+        .navbar {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 0.8rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 700;
+            color: #fff !important;
+            letter-spacing: 1px;
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.95) !important;
+            margin: 0.5rem 0.8rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Hero Section Responsive */
+        .hero {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 0;
+        }
+
+        .hero::before,
+        .hero::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.8;
+        }
+
+        .hero::before {
+            top: -20%;
+            right: -10%;
+            width: min(500px, 80vw);
+            height: min(500px, 80vw);
+            background: rgba(255, 0, 110, 0.1);
+        }
+
+        .hero::after {
+            bottom: -20%;
+            left: -10%;
+            width: min(400px, 70vw);
+            height: min(400px, 70vw);
+            background: rgba(131, 56, 236, 0.15);
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 2rem 0;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            opacity: 0.95;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero-primary {
+            padding: 14px 35px;
+            background: #fff;
+            color: #1a1a1a;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+            background: var(--secondary-color);
+            color: #fff;
+        }
+
+        /* Footer Responsive */
+        .footer {
+            background: linear-gradient(135deg, var(--dark-text) 0%, #1a1b2e 100%);
+            color: #fff;
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer h5 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.7rem;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+            padding-left: 8px;
+        }
+
+        .social-icons {
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .social-icons a {
+            color: #fff;
+            transition: all 0.4s;
+            display: inline-flex;
+            width: 50px;
+            height: 50px;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .social-icons a:hover {
+            color: var(--secondary-color);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.75);
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
+        }
+
+        .admin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.9);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 250px;
+            margin: 1rem 0;
+        }
+
+        .admin-btn:hover {
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: rgba(0, 0, 0, 0.95);
+                padding: 1rem;
+                margin-top: 1rem;
+                border-radius: 10px;
+            }
+
+            .hero {
+                min-height: 100svh;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-hero-primary {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .footer .col-md-4 {
+                margin-bottom: 2rem;
+                text-align: center;
+            }
+
+            .footer-links {
+                text-align: center;
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
+
+            .admin-btn {
+                margin: 1rem auto;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .navbar {
+                padding: 0.5rem 0;
+            }
+
+            .hero {
+                padding: 1rem 0;
+            }
+
+            .hero-content {
+                padding: 1rem 0;
+            }
+        }
+
+        /* Touch Optimization */
+        @media (hover: none) and (pointer: coarse) {
+            .btn-hero-primary,
+            .nav-link,
+            .admin-btn,
+            .social-icons a {
+                min-height: 44px;
+            }
+        }
+
+        /* Safe areas for notched devices */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-bolt me-2"></i>MAHARA SPORT</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nosotros.html">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contacto.html">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-12 col-lg-8 col-xl-6 hero-content">
+                    <h1 class="hero-title">Bienvenidos a Mahara Sport</h1>
+                    <p class="hero-subtitle">Encuentra el estilo que define tu personalidad.</p>
+                    <div class="hero-buttons">
+                        <a href="productos.html" class="btn-hero-primary">
+                            <i class="fas fa-shopping-bag me-2"></i>Ver Productos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-12 col-md-4">
+                    <h5><i class="fas fa-bolt me-2"></i>MAHARA SPORT</h5>
+                    <p>Creemos en el poder de vestir con identidad. Cada prenda refleja estilo, confianza y carácter.</p>
+                </div>
+                <div class="col-12 col-md-4">
+                    <h5>Contacto</h5>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>KRA 7 #17A-02 Local 122 CC El Tío</li>
+                        <li><i class="fas fa-phone me-2"></i>+57 300 945 4874</li>
+                        <li><i class="fas fa-envelope me-2"></i>maharasportplus@gmail.com</li>
+                    </ul>
+                </div>
+                <div class="col-12 col-md-4">
+                    <h5>Síguenos</h5>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/share/19taBZoCZZ/?mibextid=wwXIfr" aria-label="Facebook" target="_blank" rel="noopener">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/mahara_sportplus?igsh=MWYzOXpqZXU2cnU3eQ%3D%3D&utm_source=qr" aria-label="Instagram" target="_blank" rel="noopener">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@maharasportplus" aria-label="TikTok" target="_blank" rel="noopener">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                    <a href="admin.html" class="admin-btn">
+                        <i class="fas fa-lock"></i>
+                        <span>Acceso Administrador</span>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MAHARA SPORT. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-close mobile menu when clicking a link
+        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navbarToggler = document.querySelector('.navbar-toggler');
+                const navbarCollapse = document.querySelector('.navbar-collapse');
+                
+                if (window.innerWidth < 992 && navbarCollapse.classList.contains('show')) {
+                    navbarToggler.click();
+                }
+            });
+        });
+
+        // Prevent horizontal scroll
+        document.body.style.overflowX = 'hidden';
+    </script>
+</body>
+</html>
