@@ -305,22 +305,6 @@
             isolation: isolate;
         }
 
-        @media (max-width: 768px) {
-            .add-cart-btn {
-                position: relative;
-                z-index: 100;
-                pointer-events: auto !important;
-            }
-            
-            .product-card {
-                pointer-events: auto;
-            }
-            
-            .category-item {
-                pointer-events: auto;
-            }
-        }
-
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -452,6 +436,17 @@
             font-size: 0.95rem;
         }
 
+        .cart-item-size {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+
         .cart-item-price {
             font-weight: 700;
             color: var(--secondary-color);
@@ -513,6 +508,114 @@
 
         .checkout-btn:active {
             transform: scale(0.98);
+        }
+
+        /* Size Modal */
+        .size-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .size-modal.active {
+            display: flex;
+        }
+
+        .size-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .size-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .size-modal-header h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .size-modal-product {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .size-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .size-option-btn {
+            padding: 14px;
+            background: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .size-option-btn:hover {
+            border-color: #2c3e50;
+            transform: translateY(-2px);
+        }
+
+        .size-option-btn.selected {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+
+        .size-confirm-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .size-confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .size-confirm-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         /* Tablet */
@@ -639,6 +742,10 @@
                 padding: 16px;
                 font-size: 1.05rem;
             }
+
+            .size-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         /* Small Mobile */
@@ -693,6 +800,18 @@
             </div>
         </div>
     </nav>
+
+    <!-- Size Modal -->
+    <div class="size-modal" id="sizeModal">
+        <div class="size-modal-content">
+            <div class="size-modal-header">
+                <h3>Selecciona una talla</h3>
+                <p class="size-modal-product" id="sizeModalProductName"></p>
+            </div>
+            <div class="size-options" id="sizeOptions"></div>
+            <button class="size-confirm-btn" id="sizeConfirmBtn" disabled>Confirmar</button>
+        </div>
+    </div>
 
     <!-- Cart Overlay -->
     <div class="cart-overlay-cart" id="cartOverlayCart"></div>
@@ -793,6 +912,8 @@
         let filteredProducts = [];
         let cart = [];
         let currentCategory = 'todos';
+        let currentProduct = null;
+        let selectedSize = null;
 
         function formatCOP(amount) {
             return new Intl.NumberFormat('es-CO', {
@@ -911,7 +1032,7 @@
                         <div class="product-name">${product.name}</div>
                         <div class="product-description">${product.description || ''}</div>
                         <div class="product-footer">
-                            <div class="product-price">$${formatCOP(product.price)}</div>
+                            <div class="product-price">${formatCOP(product.price)}</div>
                             <button class="add-cart-btn" data-product-id="${product.id}">
                                 <i class="fas fa-cart-plus me-1"></i>Agregar
                             </button>
@@ -929,14 +1050,14 @@
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
-                    addToCart(product.id, product.name, product.price, product.imageUrl, product.category);
+                    openSizeModal(product);
                 }, { passive: false });
                 
                 addBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
-                    addToCart(product.id, product.name, product.price, product.imageUrl, product.category);
+                    openSizeModal(product);
                 });
                 
                 productCard.addEventListener('touchstart', (e) => {
@@ -948,6 +1069,68 @@
                 grid.appendChild(productCard);
             });
         }
+
+        function openSizeModal(product) {
+            currentProduct = product;
+            selectedSize = null;
+            
+            const modal = document.getElementById('sizeModal');
+            const productNameEl = document.getElementById('sizeModalProductName');
+            const sizeOptionsEl = document.getElementById('sizeOptions');
+            const confirmBtn = document.getElementById('sizeConfirmBtn');
+            
+            productNameEl.textContent = product.name;
+            
+            // Render size options
+            sizeOptionsEl.innerHTML = '';
+            if (product.sizes && product.sizes.length > 0) {
+                product.sizes.forEach(size => {
+                    const btn = document.createElement('button');
+                    btn.className = 'size-option-btn';
+                    btn.textContent = size;
+                    btn.addEventListener('click', () => selectSize(size));
+                    sizeOptionsEl.appendChild(btn);
+                });
+            } else {
+                sizeOptionsEl.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #7f8c8d;">No hay tallas disponibles</p>';
+            }
+            
+            confirmBtn.disabled = true;
+            modal.classList.add('active');
+        }
+
+        function selectSize(size) {
+            selectedSize = size;
+            
+            // Update UI
+            document.querySelectorAll('.size-option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === size) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            document.getElementById('sizeConfirmBtn').disabled = false;
+        }
+
+        function closeSizeModal() {
+            document.getElementById('sizeModal').classList.remove('active');
+            currentProduct = null;
+            selectedSize = null;
+        }
+
+        document.getElementById('sizeConfirmBtn').addEventListener('click', () => {
+            if (currentProduct && selectedSize) {
+                addToCart(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.imageUrl, currentProduct.category, selectedSize);
+                closeSizeModal();
+            }
+        });
+
+        document.getElementById('sizeModal').addEventListener('click', (e) => {
+            if (e.target.id === 'sizeModal') {
+                closeSizeModal();
+            }
+        });
 
         function openCart() {
             document.getElementById('cartSidebar').classList.add('open');
@@ -971,7 +1154,7 @@
             cartCount.textContent = totalItems;
 
             const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            cartTotal.textContent = `$${formatCOP(total)}`;
+            cartTotal.textContent = `${formatCOP(total)}`;
 
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = `
@@ -992,8 +1175,9 @@
                         <img src="${item.imageUrl}" alt="${item.name}" class="cart-item-image">
                         <div class="cart-item-details">
                             <div class="cart-item-name">${item.name}</div>
+                            <span class="cart-item-size">Talla: ${item.size}</span>
                             <div style="font-size: 0.813rem; color: #6c757d; margin-bottom: 6px;">${item.category}</div>
-                            <div class="cart-item-price">$${formatCOP(item.price)}</div>
+                            <div class="cart-item-price">${formatCOP(item.price)}</div>
                             <div class="cart-item-controls">
                                 <button class="decrease-qty">
                                     <i class="fas fa-minus"></i>
@@ -1010,15 +1194,15 @@
                     `;
                     
                     cartItem.querySelector('.decrease-qty').addEventListener('click', () => {
-                        updateQuantity(item.id, -1);
+                        updateQuantity(item.id, item.size, -1);
                     });
                     
                     cartItem.querySelector('.increase-qty').addEventListener('click', () => {
-                        updateQuantity(item.id, 1);
+                        updateQuantity(item.id, item.size, 1);
                     });
                     
                     cartItem.querySelector('.remove-item').addEventListener('click', () => {
-                        removeFromCart(item.id);
+                        removeFromCart(item.id, item.size);
                     });
                     
                     cartItemsContainer.appendChild(cartItem);
@@ -1028,8 +1212,8 @@
             }
         }
 
-        function addToCart(productId, productName, price, imageUrl, category) {
-            const existingItem = cart.find(item => item.id === productId);
+        function addToCart(productId, productName, price, imageUrl, category, size) {
+            const existingItem = cart.find(item => item.id === productId && item.size === size);
             
             if (existingItem) {
                 existingItem.quantity++;
@@ -1040,30 +1224,31 @@
                     price: price,
                     imageUrl: imageUrl,
                     category: category,
+                    size: size,
                     quantity: 1
                 });
             }
 
             updateCartUI();
-            showNotification(`${productName} agregado`);
+            showNotification(`${productName} (${size}) agregado`);
         }
 
-        function updateQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
+        function updateQuantity(productId, size, change) {
+            const item = cart.find(item => item.id === productId && item.size === size);
             
             if (item) {
                 item.quantity += change;
                 
                 if (item.quantity <= 0) {
-                    removeFromCart(productId);
+                    removeFromCart(productId, size);
                 } else {
                     updateCartUI();
                 }
             }
         }
 
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
+        function removeFromCart(productId, size) {
+            cart = cart.filter(item => !(item.id === productId && item.size === size));
             updateCartUI();
         }
 
@@ -1080,15 +1265,16 @@
             cart.forEach((item, index) => {
                 mensaje += `\n${index + 1}. *${item.name}*\n`;
                 mensaje += `   📁 ${item.category}\n`;
-                mensaje += `   💰 $${formatCOP(item.price)}\n`;
+                mensaje += `   📏 Talla: ${item.size}\n`;
+                mensaje += `   💰 ${formatCOP(item.price)}\n`;
                 mensaje += `   📊 x${item.quantity}\n`;
-                mensaje += `   💵 $${formatCOP(item.price * item.quantity)}\n`;
+                mensaje += `   💵 ${formatCOP(item.price * item.quantity)}\n`;
             });
             
             mensaje += '\n━━━━━━━━━━━━━━━━\n';
             mensaje += `\n📋 *RESUMEN:*\n`;
             mensaje += `   Productos: ${itemCount}\n`;
-            mensaje += `   💳 *TOTAL: $${formatCOP(total)}*\n\n`;
+            mensaje += `   💳 *TOTAL: ${formatCOP(total)}*\n\n`;
             mensaje += '¡Gracias! 🙏';
             
             const numeroWhatsApp = '573009454874';
@@ -1152,6 +1338,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeCart();
+                closeSizeModal();
             }
         });
 
@@ -1166,3 +1353,4 @@
     </script>
 </body>
 </html>
+
