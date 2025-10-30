@@ -368,7 +368,23 @@
             font-size: 22px;
             color: #e74c3c;
             font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .product-sizes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
             margin-bottom: 15px;
+        }
+
+        .size-badge {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #2c3e50;
+            font-weight: 600;
         }
 
         .product-actions {
@@ -504,6 +520,48 @@
         .form-field textarea {
             resize: vertical;
             min-height: 100px;
+        }
+
+        /* Sizes Selection */
+        .sizes-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .size-option {
+            position: relative;
+        }
+
+        .size-option input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .size-label {
+            display: block;
+            padding: 12px;
+            background: #f0f0f0;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .size-option input[type="checkbox"]:checked + .size-label {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .size-label:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
         }
 
         /* Price Input with COP symbol */
@@ -915,12 +973,6 @@ service firebase.storage {
   }
 }
                     </div>
-                    <p style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px;">
-                        <strong>Acceso directo a tu consola:</strong><br>
-                        <a href="https://console.firebase.google.com/project/dark-store-45674" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">
-                            → Ir a Firebase Console
-                        </a>
-                    </p>
                 </div>
             </div>
         </main>
@@ -977,6 +1029,37 @@ service firebase.storage {
                         <option value="zapatos">Zapatos</option>
                         <option value="accesorios">Accesorios</option>
                     </select>
+                </div>
+
+                <div class="form-field">
+                    <label>Tallas Disponibles</label>
+                    <div class="sizes-selector" id="sizesSelector">
+                        <div class="size-option">
+                            <input type="checkbox" id="size-xs" value="XS">
+                            <label for="size-xs" class="size-label">XS</label>
+                        </div>
+                        <div class="size-option">
+                            <input type="checkbox" id="size-s" value="S">
+                            <label for="size-s" class="size-label">S</label>
+                        </div>
+                        <div class="size-option">
+                            <input type="checkbox" id="size-m" value="M">
+                            <label for="size-m" class="size-label">M</label>
+                        </div>
+                        <div class="size-option">
+                            <input type="checkbox" id="size-l" value="L">
+                            <label for="size-l" class="size-label">L</label>
+                        </div>
+                        <div class="size-option">
+                            <input type="checkbox" id="size-xl" value="XL">
+                            <label for="size-xl" class="size-label">XL</label>
+                        </div>
+                        <div class="size-option">
+                            <input type="checkbox" id="size-xxl" value="XXL">
+                            <label for="size-xxl" class="size-label">XXL</label>
+                        </div>
+                    </div>
+                    <small style="color: #7f8c8d; margin-top: 8px; display: block;">Selecciona las tallas disponibles para este producto</small>
                 </div>
 
                 <button type="submit" class="save-btn" id="saveBtn">
@@ -1037,6 +1120,22 @@ service firebase.storage {
             if (value) {
                 input.value = formatCOP(parseInt(value));
             }
+        }
+
+        // Get selected sizes
+        function getSelectedSizes() {
+            const sizes = [];
+            document.querySelectorAll('#sizesSelector input[type="checkbox"]:checked').forEach(checkbox => {
+                sizes.push(checkbox.value);
+            });
+            return sizes;
+        }
+
+        // Set selected sizes
+        function setSelectedSizes(sizes) {
+            document.querySelectorAll('#sizesSelector input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = sizes.includes(checkbox.value);
+            });
         }
 
         // Check Auth State
@@ -1212,6 +1311,7 @@ service firebase.storage {
                 form.reset();
                 imagePreview.style.display = 'none';
                 uploadedImageUrl = null;
+                setSelectedSizes([]);
             }
 
             modal.style.display = 'block';
@@ -1223,6 +1323,7 @@ service firebase.storage {
             imagePreview.style.display = 'none';
             uploadedImageUrl = null;
             currentEditId = null;
+            setSelectedSizes([]);
         }
 
         async function loadProductData(productId) {
@@ -1237,6 +1338,10 @@ service firebase.storage {
                 previewImg.src = product.imageUrl;
                 imagePreview.style.display = 'block';
                 uploadedImageUrl = product.imageUrl;
+            }
+
+            if (product.sizes && product.sizes.length > 0) {
+                setSelectedSizes(product.sizes);
             }
         }
 
@@ -1259,6 +1364,7 @@ service firebase.storage {
 
             const nameValue = document.getElementById('productName').value.trim();
             const categoryValue = document.getElementById('productCategory').value;
+            const selectedSizes = getSelectedSizes();
 
             if (!nameValue) {
                 alert('Por favor ingresa un nombre para el producto');
@@ -1270,11 +1376,17 @@ service firebase.storage {
                 return;
             }
 
+            if (selectedSizes.length === 0) {
+                alert('Por favor selecciona al menos una talla');
+                return;
+            }
+
             const productData = {
                 name: nameValue,
                 price: price,
                 category: categoryValue,
                 imageUrl: uploadedImageUrl,
+                sizes: selectedSizes,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
@@ -1340,6 +1452,10 @@ service firebase.storage {
         }
 
         function createProductCard(id, product) {
+            const sizesHTML = product.sizes && product.sizes.length > 0 
+                ? `<div class="product-sizes">${product.sizes.map(size => `<span class="size-badge">${size}</span>`).join('')}</div>`
+                : '';
+
             return `
                 <div class="product-card-admin">
                     <img src="${product.imageUrl}" alt="${product.name}" class="product-image-admin">
@@ -1347,7 +1463,7 @@ service firebase.storage {
                         <span class="product-category-admin">${product.category}</span>
                         <h3 class="product-title-admin">${product.name}</h3>
                         <div class="product-price-admin">${formatCOP(product.price)}</div>
-                        <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 15px;">${product.description}</p>
+                        ${sizesHTML}
                         <div class="product-actions">
                             <button class="btn-edit" onclick="openProductModal('${id}')">
                                 <i class="fas fa-edit"></i> Editar
@@ -1399,8 +1515,8 @@ service firebase.storage {
 
                 document.getElementById('totalProducts').textContent = totalProducts;
                 document.getElementById('totalImages').textContent = totalProducts;
-                document.getElementById('totalValue').textContent = formatCOP(totalValue);
-
+                document.getElementById('totalValue').textContent = 
+                     + formatCOP(totalValue);
 
                 updateCategoryStats();
             } catch (error) {
@@ -1438,5 +1554,4 @@ service firebase.storage {
         }
     </script>
 </body>
-
 </html>
