@@ -536,6 +536,8 @@
             max-width: 400px;
             width: 100%;
             animation: slideUp 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         @keyframes slideUp {
@@ -565,11 +567,30 @@
             color: #7f8c8d;
         }
 
+        .size-section {
+            margin-bottom: 24px;
+        }
+
+        .size-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
         .size-options {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             margin-bottom: 20px;
+        }
+
+        .size-options.numeric {
+            grid-template-columns: repeat(4, 1fr);
         }
 
         .size-option-btn {
@@ -587,6 +608,10 @@
         .size-option-btn:hover {
             border-color: #2c3e50;
             transform: translateY(-2px);
+        }
+
+        .size-option-btn:active {
+            transform: scale(0.95);
         }
 
         .size-option-btn.selected {
@@ -744,7 +769,11 @@
             }
 
             .size-options {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .size-options.numeric {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
@@ -808,7 +837,17 @@
                 <h3>Selecciona una talla</h3>
                 <p class="size-modal-product" id="sizeModalProductName"></p>
             </div>
-            <div class="size-options" id="sizeOptions"></div>
+            
+            <div class="size-section">
+                <div class="size-section-title" id="standardSizeTitle">Tallas</div>
+                <div class="size-options" id="sizeOptions"></div>
+            </div>
+
+            <div class="size-section" id="numericSizeSection" style="display: none;">
+                <div class="size-section-title">Tallas Numéricas</div>
+                <div class="size-options numeric" id="numericSizeOptions"></div>
+            </div>
+
             <button class="size-confirm-btn" id="sizeConfirmBtn" disabled>Confirmar</button>
         </div>
     </div>
@@ -873,6 +912,7 @@
                     <i class="fas fa-gem"></i>
                     <span>Accesorios</span>
                 </button>
+                
             </div>
         </div>
 
@@ -914,6 +954,8 @@
         let currentCategory = 'todos';
         let currentProduct = null;
         let selectedSize = null;
+
+        const NUMERIC_SIZES = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
 
         function formatCOP(amount) {
             return new Intl.NumberFormat('es-CO', {
@@ -1077,11 +1119,13 @@
             const modal = document.getElementById('sizeModal');
             const productNameEl = document.getElementById('sizeModalProductName');
             const sizeOptionsEl = document.getElementById('sizeOptions');
+            const numericSizeSection = document.getElementById('numericSizeSection');
+            const numericSizeOptionsEl = document.getElementById('numericSizeOptions');
             const confirmBtn = document.getElementById('sizeConfirmBtn');
             
             productNameEl.textContent = product.name;
             
-            // Render size options
+            // Render standard size options
             sizeOptionsEl.innerHTML = '';
             if (product.sizes && product.sizes.length > 0) {
                 product.sizes.forEach(size => {
@@ -1093,6 +1137,21 @@
                 });
             } else {
                 sizeOptionsEl.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #7f8c8d;">No hay tallas disponibles</p>';
+            }
+            
+            // Show numeric sizes section for shoes category
+            if (product.category === 'zapatos') {
+                numericSizeSection.style.display = 'block';
+                numericSizeOptionsEl.innerHTML = '';
+                NUMERIC_SIZES.forEach(size => {
+                    const btn = document.createElement('button');
+                    btn.className = 'size-option-btn';
+                    btn.textContent = size;
+                    btn.addEventListener('click', () => selectSize(size));
+                    numericSizeOptionsEl.appendChild(btn);
+                });
+            } else {
+                numericSizeSection.style.display = 'none';
             }
             
             confirmBtn.disabled = true;
@@ -1353,4 +1412,5 @@
     </script>
 </body>
 </html>
+
 
