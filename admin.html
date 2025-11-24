@@ -279,6 +279,8 @@
         .stat-icon.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         .stat-icon.orange { background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%); }
         .stat-icon.blue { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
+        .stat-icon.red { background: linear-gradient(135deg, #f12711 0%, #f5af19 100%); }
+        .stat-icon.pink { background: linear-gradient(135deg, #c31432 0%, #240b36 100%); }
 
         .stat-details h3 {
             color: #2c3e50;
@@ -776,7 +778,7 @@
                 <i class="fas fa-bolt"></i>
                 <h2>MAHARA SPORT Admin</h2>
             </div>
-            <button type="button" class="back-btn" onclick="window.location.href='index.html'">
+            <button type="button" class="back-btn" onclick="window.location.href='productos.html'">
                 <i class="fas fa-arrow-left"></i> Regresar
             </button>
             <form id="loginForm">
@@ -822,7 +824,7 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="top-bar">
-                <h1 id="pageTitle">Admin</h1>
+                <h1 id="pageTitle">Dashboard</h1>
                 <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                 </button>
@@ -845,7 +847,7 @@
                             <i class="fas fa-tags"></i>
                         </div>
                         <div class="stat-details">
-                            <h3>5</h3>
+                            <h3>6</h3>
                             <p>Categorías</p>
                         </div>
                     </div>
@@ -887,7 +889,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon purple">
-                            <i class="fas fa-tshirt"></i>
+                            <i class="fas fa-vest"></i>
                         </div>
                         <div class="stat-details">
                             <h3 id="sueterCount">0</h3>
@@ -896,7 +898,7 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon blue">
-                            <i class="fas fa-shirt"></i>
+                            <i class="fas fa-tshirt"></i>
                         </div>
                         <div class="stat-details">
                             <h3 id="poloCount">0</h3>
@@ -905,7 +907,7 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon orange">
-                            <i class="fas fa-socks"></i>
+                            <i class="fas fa-jeans"></i>
                         </div>
                         <div class="stat-details">
                             <h3 id="jeansCount">0</h3>
@@ -922,12 +924,21 @@
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon purple">
+                        <div class="stat-icon pink">
                             <i class="fas fa-gem"></i>
                         </div>
                         <div class="stat-details">
                             <h3 id="accesoriosCount">0</h3>
                             <p>Accesorios</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3 id="conjuntosCount">0</h3>
+                            <p>Conjuntos Deportivos</p>
                         </div>
                     </div>
                 </div>
@@ -986,572 +997,574 @@ service firebase.storage {
                 <span class="close-modal" onclick="closeProductModal()">&times;</span>
             </div>
             <form id="productForm">
+                <div class="form-field"><label>Imagen del Producto</label>
+                <div class="image-upload-area" id="imageUpload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p><strong>Haz clic o arrastra</strong> una imagen aquí</p>
+                    <small>JPG, PNG o WEBP (máx. 5MB)</small>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                </div>
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImg" src="" alt="Preview">
+                </div>
+                <div class="upload-progress" id="uploadProgress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Subiendo... 0%</div>
+                </div>
+            </div>
+
+            <div class="form-row">
                 <div class="form-field">
-                    <label>Imagen del Producto</label>
-                    <div class="image-upload-area" id="imageUpload">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p><strong>Haz clic o arrastra</strong> una imagen aquí</p>
-                        <small>JPG, PNG o WEBP (máx. 5MB)</small>
-                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
-                    </div>
-                    <div class="image-preview" id="imagePreview">
-                        <img id="previewImg" src="" alt="Preview">
-                    </div>
-                    <div class="upload-progress" id="uploadProgress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <div class="progress-text" id="progressText">Subiendo... 0%</div>
-                    </div>
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="productName" placeholder="Ej: Camisa Deportiva" required>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-field">
-                        <label>Nombre del Producto</label>
-                        <input type="text" id="productName" placeholder="Ej: Camisa Deportiva" required>
-                    </div>
-                    <div class="form-field">
-                        <label>Precio (COP)</label>
-                        <div class="price-input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="text" id="productPrice" placeholder="50.000" required>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="form-field">
-                    <label>Categoría</label>
-                    <select id="productCategory" required>
-                        <option value="">Selecciona una categoría</option>
-                        <option value="sueter">Suéter</option>
-                        <option value="polo">Tipo Polo</option>
-                        <option value="jeans">Jeans</option>
-                        <option value="zapatos">Zapatos</option>
-                        <option value="accesorios">Accesorios</option>
-                    </select>
-                </div>
-
-                <div class="form-field">
-                    <label>Tallas Disponibles</label>
-                    <div class="sizes-selector" id="sizesSelector">
-                        <div class="size-option">
-                            <input type="checkbox" id="size-xs" value="XS">
-                            <label for="size-xs" class="size-label">XS</label>
-                        </div>
-                        <div class="size-option">
-                            <input type="checkbox" id="size-s" value="S">
-                            <label for="size-s" class="size-label">S</label>
-                        </div>
-                        <div class="size-option">
-                            <input type="checkbox" id="size-m" value="M">
-                            <label for="size-m" class="size-label">M</label>
-                        </div>
-                        <div class="size-option">
-                            <input type="checkbox" id="size-l" value="L">
-                            <label for="size-l" class="size-label">L</label>
-                        </div>
-                        <div class="size-option">
-                            <input type="checkbox" id="size-xl" value="XL">
-                            <label for="size-xl" class="size-label">XL</label>
-                        </div>
-                        <div class="size-option">
-                            <input type="checkbox" id="size-xxl" value="XXL">
-                            <label for="size-xxl" class="size-label">XXL</label>
-                        </div>
+                    <label>Precio (COP)</label>
+                    <div class="price-input-wrapper">
+                        <span class="currency-symbol">$</span>
+                        <input type="text" id="productPrice" placeholder="50.000" required>
                     </div>
-                    <small style="color: #7f8c8d; margin-top: 8px; display: block;">Selecciona las tallas disponibles para este producto</small>
                 </div>
+            </div>
 
-                <button type="submit" class="save-btn" id="saveBtn">
-                    <i class="fas fa-save"></i> Guardar Producto
-                </button>
-            </form>
-        </div>
+            <div class="form-field">
+                <label>Categoría</label>
+                <select id="productCategory" required>
+                    <option value="">Selecciona una categoría</option>
+                    <option value="sueter">Suéter</option>
+                    <option value="polo">Tipo Polo</option>
+                    <option value="jeans">Jeans</option>
+                    <option value="zapatos">Zapatos</option>
+                    <option value="accesorios">Accesorios</option>
+                    <option value="conjuntos">Conjuntos Deportivos</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Tallas Disponibles</label>
+                <div class="sizes-selector" id="sizesSelector">
+                    <div class="size-option">
+                        <input type="checkbox" id="size-s" value="S">
+                        <label for="size-s" class="size-label">S</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size-m" value="M">
+                        <label for="size-m" class="size-label">M</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size-l" value="L">
+                        <label for="size-l" class="size-label">L</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size-xl" value="XL">
+                        <label for="size-xl" class="size-label">XL</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size-xxl" value="XXL">
+                        <label for="size-xxl" class="size-label">XXL</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size-xxxl" value="XXXL">
+                        <label for="size-xxxl" class="size-label">XXXL</label>
+                    </div>
+                </div>
+                <small style="color: #7f8c8d; margin-top: 8px; display: block;">Selecciona las tallas disponibles para este producto</small>
+            </div>
+
+            <button type="submit" class="save-btn" id="saveBtn">
+                <i class="fas fa-save"></i> Guardar Producto
+            </button>
+        </form>
     </div>
+</div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
-    <script>
-        // Configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyCq5UQ2WRX27wQ5ehvp3YB6PLs9jkaf4Xs",
-            authDomain: "dark-store-45674.firebaseapp.com",
-            projectId: "dark-store-45674",
-            storageBucket: "dark-store-45674.firebasestorage.app",
-            messagingSenderId: "919492208777",
-            appId: "1:919492208777:web:8c77b74370654778fd7e58",
-            measurementId: "G-3VTR2R6SD2"
+<script>
+    // Configuración de Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCq5UQ2WRX27wQ5ehvp3YB6PLs9jkaf4Xs",
+        authDomain: "dark-store-45674.firebaseapp.com",
+        projectId: "dark-store-45674",
+        storageBucket: "dark-store-45674.firebasestorage.app",
+        messagingSenderId: "919492208777",
+        appId: "1:919492208777:web:8c77b74370654778fd7e58",
+        measurementId: "G-3VTR2R6SD2"
+    };
+
+    // Inicializar Firebase
+    let app, auth, db, storage;
+    try {
+        app = firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        storage = firebase.storage();
+    } catch (error) {
+        console.error("Error al inicializar Firebase:", error);
+    }
+
+    let currentEditId = null;
+    let uploadedImageUrl = null;
+
+    // Format Colombian Peso
+    function formatCOP(amount) {
+        return new Intl.NumberFormat('es-CO', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(amount);
+    }
+
+    // Parse formatted COP to number
+    function parseCOP(value) {
+        return parseInt(value.replace(/\D/g, '')) || 0;
+    }
+
+    // Format input as Colombian Peso
+    function formatInputCOP(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value) {
+            input.value = formatCOP(parseInt(value));
+        }
+    }
+
+    // Get selected sizes
+    function getSelectedSizes() {
+        const sizes = [];
+        document.querySelectorAll('#sizesSelector input[type="checkbox"]:checked').forEach(checkbox => {
+            sizes.push(checkbox.value);
+        });
+        return sizes;
+    }
+
+    // Set selected sizes
+    function setSelectedSizes(sizes) {
+        document.querySelectorAll('#sizesSelector input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = sizes.includes(checkbox.value);
+        });
+    }
+
+    // Check Auth State
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            loadProducts();
+            updateStats();
+        } else {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminDashboard').style.display = 'none';
+        }
+    });
+
+    // Login
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const errorMsg = document.getElementById('loginError');
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            errorMsg.style.display = 'none';
+        } catch (error) {
+            errorMsg.textContent = 'Error: ' + error.message;
+            errorMsg.style.display = 'block';
+        }
+    });
+
+    // Logout
+    function logout() {
+        if (confirm('¿Estás seguro de cerrar sesión?')) {
+            auth.signOut();
+        }
+    }
+
+    // Show Section
+    function showSection(section) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+        
+        const sectionMap = {
+            'dashboard': { id: 'dashboardSection', title: 'Dashboard' },
+            'products': { id: 'productsSection', title: 'Productos' },
+            'categories': { id: 'categoriesSection', title: 'Categorías' },
+            'config': { id: 'configSection', title: 'Configuración' }
         };
 
-        // Inicializar Firebase
-        let app, auth, db, storage;
-        try {
-            app = firebase.initializeApp(firebaseConfig);
-            auth = firebase.auth();
-            db = firebase.firestore();
-            storage = firebase.storage();
-        } catch (error) {
-            console.error("Error al inicializar Firebase:", error);
+        const current = sectionMap[section];
+        document.getElementById(current.id).classList.add('active');
+        document.getElementById('pageTitle').textContent = current.title;
+        event.target.classList.add('active');
+
+        if (section === 'products') {
+            loadProducts();
+        } else if (section === 'categories') {
+            updateCategoryStats();
+        }
+    }
+
+    // Price Input Formatting
+    const priceInput = document.getElementById('productPrice');
+    
+    priceInput.addEventListener('input', function() {
+        formatInputCOP(this);
+    });
+
+    priceInput.addEventListener('focus', function() {
+        if (this.value === '0') {
+            this.value = '';
+        }
+    });
+
+    // Image Upload
+    const imageUpload = document.getElementById('imageUpload');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+
+    imageUpload.addEventListener('click', () => imageInput.click());
+
+    imageUpload.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        imageUpload.classList.add('dragover');
+    });
+
+    imageUpload.addEventListener('dragleave', () => {
+        imageUpload.classList.remove('dragover');
+    });
+
+    imageUpload.addEventListener('drop', (e) => {
+        e.preventDefault();
+        imageUpload.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            handleImageUpload(file);
+        }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            handleImageUpload(file);
+        }
+    });
+
+    async function handleImageUpload(file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('La imagen es muy grande. Máximo 5MB.');
+            return;
         }
 
-        let currentEditId = null;
-        let uploadedImageUrl = null;
+        // Preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImg.src = e.target.result;
+            imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
 
-        // Format Colombian Peso
-        function formatCOP(amount) {
-            return new Intl.NumberFormat('es-CO', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
-        }
+        // Upload to Firebase Storage
+        const uploadProgress = document.getElementById('uploadProgress');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const saveBtn = document.getElementById('saveBtn');
 
-        // Parse formatted COP to number
-        function parseCOP(value) {
-            return parseInt(value.replace(/\D/g, '')) || 0;
-        }
+        uploadProgress.style.display = 'block';
+        saveBtn.disabled = true;
 
-        // Format input as Colombian Peso
-        function formatInputCOP(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value) {
-                input.value = formatCOP(parseInt(value));
-            }
-        }
+        const storageRef = storage.ref();
+        const fileName = `products/${Date.now()}_${file.name}`;
+        const fileRef = storageRef.child(fileName);
+        const uploadTask = fileRef.put(file);
 
-        // Get selected sizes
-        function getSelectedSizes() {
-            const sizes = [];
-            document.querySelectorAll('#sizesSelector input[type="checkbox"]:checked').forEach(checkbox => {
-                sizes.push(checkbox.value);
-            });
-            return sizes;
-        }
-
-        // Set selected sizes
-        function setSelectedSizes(sizes) {
-            document.querySelectorAll('#sizesSelector input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = sizes.includes(checkbox.value);
-            });
-        }
-
-        // Check Auth State
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('adminDashboard').style.display = 'block';
-                loadProducts();
-                updateStats();
-            } else {
-                document.getElementById('loginScreen').style.display = 'flex';
-                document.getElementById('adminDashboard').style.display = 'none';
-            }
-        });
-
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const errorMsg = document.getElementById('loginError');
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                errorMsg.style.display = 'none';
-            } catch (error) {
-                errorMsg.textContent = 'Error: ' + error.message;
-                errorMsg.style.display = 'block';
-            }
-        });
-
-        // Logout
-        function logout() {
-            if (confirm('¿Estás seguro de cerrar sesión?')) {
-                auth.signOut();
-            }
-        }
-
-        // Show Section
-        function showSection(section) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
-            
-            const sectionMap = {
-                'dashboard': { id: 'dashboardSection', title: 'Dashboard' },
-                'products': { id: 'productsSection', title: 'Productos' },
-                'categories': { id: 'categoriesSection', title: 'Categorías' },
-                'config': { id: 'configSection', title: 'Configuración' }
-            };
-
-            const current = sectionMap[section];
-            document.getElementById(current.id).classList.add('active');
-            document.getElementById('pageTitle').textContent = current.title;
-            event.target.classList.add('active');
-
-            if (section === 'products') {
-                loadProducts();
-            } else if (section === 'categories') {
-                updateCategoryStats();
-            }
-        }
-
-        // Price Input Formatting
-        const priceInput = document.getElementById('productPrice');
-        
-        priceInput.addEventListener('input', function() {
-            formatInputCOP(this);
-        });
-
-        priceInput.addEventListener('focus', function() {
-            if (this.value === '0') {
-                this.value = '';
-            }
-        });
-
-        // Image Upload
-        const imageUpload = document.getElementById('imageUpload');
-        const imageInput = document.getElementById('imageInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const previewImg = document.getElementById('previewImg');
-
-        imageUpload.addEventListener('click', () => imageInput.click());
-
-        imageUpload.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            imageUpload.classList.add('dragover');
-        });
-
-        imageUpload.addEventListener('dragleave', () => {
-            imageUpload.classList.remove('dragover');
-        });
-
-        imageUpload.addEventListener('drop', (e) => {
-            e.preventDefault();
-            imageUpload.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                handleImageUpload(file);
-            }
-        });
-
-        imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                handleImageUpload(file);
-            }
-        });
-
-        async function handleImageUpload(file) {
-            if (file.size > 5 * 1024 * 1024) {
-                alert('La imagen es muy grande. Máximo 5MB.');
-                return;
-            }
-
-            // Preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-
-            // Upload to Firebase Storage
-            const uploadProgress = document.getElementById('uploadProgress');
-            const progressFill = document.getElementById('progressFill');
-            const progressText = document.getElementById('progressText');
-            const saveBtn = document.getElementById('saveBtn');
-
-            uploadProgress.style.display = 'block';
-            saveBtn.disabled = true;
-
-            const storageRef = storage.ref();
-            const fileName = `products/${Date.now()}_${file.name}`;
-            const fileRef = storageRef.child(fileName);
-            const uploadTask = fileRef.put(file);
-
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressFill.style.width = progress + '%';
-                    progressText.textContent = `Subiendo... ${Math.round(progress)}%`;
-                },
-                (error) => {
-                    console.error('Error al subir:', error);
-                    alert('Error al subir la imagen');
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressFill.style.width = progress + '%';
+                progressText.textContent = `Subiendo... ${Math.round(progress)}%`;
+            },
+            (error) => {
+                console.error('Error al subir:', error);
+                alert('Error al subir la imagen');
+                uploadProgress.style.display = 'none';
+                saveBtn.disabled = false;
+            },
+            async () => {
+                uploadedImageUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                progressText.textContent = '¡Imagen subida con éxito!';
+                setTimeout(() => {
                     uploadProgress.style.display = 'none';
                     saveBtn.disabled = false;
-                },
-                async () => {
-                    uploadedImageUrl = await uploadTask.snapshot.ref.getDownloadURL();
-                    progressText.textContent = '¡Imagen subida con éxito!';
-                    setTimeout(() => {
-                        uploadProgress.style.display = 'none';
-                        saveBtn.disabled = false;
-                    }, 1000);
-                }
-            );
-        }
-
-        // Product Modal
-        function openProductModal(productId = null) {
-            const modal = document.getElementById('productModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const form = document.getElementById('productForm');
-
-            if (productId) {
-                modalTitle.textContent = 'Editar Producto';
-                currentEditId = productId;
-                loadProductData(productId);
-            } else {
-                modalTitle.textContent = 'Nuevo Producto';
-                currentEditId = null;
-                form.reset();
-                imagePreview.style.display = 'none';
-                uploadedImageUrl = null;
-                setSelectedSizes([]);
+                }, 1000);
             }
+        );
+    }
 
-            modal.style.display = 'block';
-        }
+    // Product Modal
+    function openProductModal(productId = null) {
+        const modal = document.getElementById('productModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const form = document.getElementById('productForm');
 
-        function closeProductModal() {
-            document.getElementById('productModal').style.display = 'none';
-            document.getElementById('productForm').reset();
+        if (productId) {
+            modalTitle.textContent = 'Editar Producto';
+            currentEditId = productId;
+            loadProductData(productId);
+        } else {
+            modalTitle.textContent = 'Nuevo Producto';
+            currentEditId = null;
+            form.reset();
             imagePreview.style.display = 'none';
             uploadedImageUrl = null;
-            currentEditId = null;
             setSelectedSizes([]);
         }
 
-        async function loadProductData(productId) {
+        modal.style.display = 'block';
+    }
+
+    function closeProductModal() {
+        document.getElementById('productModal').style.display = 'none';
+        document.getElementById('productForm').reset();
+        imagePreview.style.display = 'none';
+        uploadedImageUrl = null;
+        currentEditId = null;
+        setSelectedSizes([]);
+    }
+
+    async function loadProductData(productId) {
+        const doc = await db.collection('products').doc(productId).get();
+        const product = doc.data();
+
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productPrice').value = formatCOP(product.price);
+        document.getElementById('productCategory').value = product.category;
+
+        if (product.imageUrl) {
+            previewImg.src = product.imageUrl;
+            imagePreview.style.display = 'block';
+            uploadedImageUrl = product.imageUrl;
+        }
+
+        if (product.sizes && product.sizes.length > 0) {
+            setSelectedSizes(product.sizes);
+        }
+    }
+
+    // Save Product
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!uploadedImageUrl) {
+            alert('Por favor sube una imagen del producto');
+            return;
+        }
+
+        const priceValue = document.getElementById('productPrice').value;
+        const price = parseCOP(priceValue);
+
+        if (!price || price <= 0) {
+            alert('Por favor ingresa un precio válido');
+            return;
+        }
+
+        const nameValue = document.getElementById('productName').value.trim();
+        const categoryValue = document.getElementById('productCategory').value;
+        const selectedSizes = getSelectedSizes();
+
+        if (!nameValue) {
+            alert('Por favor ingresa un nombre para el producto');
+            return;
+        }
+
+        if (!categoryValue) {
+            alert('Por favor selecciona una categoría');
+            return;
+        }
+
+        if (selectedSizes.length === 0) {
+            alert('Por favor selecciona al menos una talla');
+            return;
+        }
+
+        const productData = {
+            name: nameValue,
+            price: price,
+            category: categoryValue,
+            imageUrl: uploadedImageUrl,
+            sizes: selectedSizes,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        try {
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+            if (currentEditId) {
+                await db.collection('products').doc(currentEditId).update(productData);
+                alert('Producto actualizado exitosamente');
+            } else {
+                productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('products').add(productData);
+                alert('Producto creado exitosamente');
+            }
+            
+            closeProductModal();
+            loadProducts();
+            updateStats();
+            
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
+        } catch (error) {
+            console.error('Error al guardar:', error);
+            alert('Error al guardar el producto: ' + error.message);
+            
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
+        }
+    });
+
+    // Load Products
+    async function loadProducts() {
+        const container = document.getElementById('productsContainer');
+        container.innerHTML = '<p style="text-align: center; padding: 40px;">Cargando productos...</p>';
+
+        try {
+            const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
+            
+            if (snapshot.empty) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h3>No hay productos</h3>
+                        <p>Comienza agregando tu primer producto</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            snapshot.forEach(doc => {
+                const product = doc.data();
+                const card = createProductCard(doc.id, product);
+                container.innerHTML += card;
+            });
+        } catch (error) {
+            console.error('Error al cargar productos:', error);
+            container.innerHTML = '<p style="text-align: center; color: #e74c3c;">Error al cargar productos</p>';
+        }
+    }
+
+    function createProductCard(id, product) {
+        const sizesHTML = product.sizes && product.sizes.length > 0 
+            ? `<div class="product-sizes">${product.sizes.map(size => `<span class="size-badge">${size}</span>`).join('')}</div>`
+            : '';
+
+        return `
+            <div class="product-card-admin">
+                <img src="${product.imageUrl}" alt="${product.name}" class="product-image-admin">
+                <div class="product-info-admin">
+                    <span class="product-category-admin">${product.category}</span>
+                    <h3 class="product-title-admin">${product.name}</h3>
+                    <div class="product-price-admin">$${formatCOP(product.price)}</div>
+                    ${sizesHTML}
+                    <div class="product-actions">
+                        <button class="btn-edit" onclick="openProductModal('${id}')">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn-delete" onclick="deleteProduct('${id}')">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Delete Product
+    async function deleteProduct(productId) {
+        if (!confirm('¿Estás seguro de eliminar este producto?')) {
+            return;
+        }
+
+        try {
             const doc = await db.collection('products').doc(productId).get();
             const product = doc.data();
 
-            document.getElementById('productName').value = product.name;
-            document.getElementById('productPrice').value = formatCOP(product.price);
-            document.getElementById('productCategory').value = product.category;
-
+            // Delete image from storage
             if (product.imageUrl) {
-                previewImg.src = product.imageUrl;
-                imagePreview.style.display = 'block';
-                uploadedImageUrl = product.imageUrl;
+                const imageRef = storage.refFromURL(product.imageUrl);
+                await imageRef.delete().catch(err => console.log('Error al eliminar imagen:', err));
             }
 
-            if (product.sizes && product.sizes.length > 0) {
-                setSelectedSizes(product.sizes);
-            }
+            // Delete product
+            await db.collection('products').doc(productId).delete();
+            alert('Producto eliminado exitosamente');
+            loadProducts();
+            updateStats();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar el producto');
         }
+    }
 
-        // Save Product
-        document.getElementById('productForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    // Update Stats
+    async function updateStats() {
+        try {
+            const snapshot = await db.collection('products').get();
+            const products = snapshot.docs.map(doc => doc.data());
 
-            if (!uploadedImageUrl) {
-                alert('Por favor sube una imagen del producto');
-                return;
-            }
+            const totalProducts = products.length;
+            const totalValue = products.reduce((sum, p) => sum + (p.price || 0), 0);
 
-            const priceValue = document.getElementById('productPrice').value;
-            const price = parseCOP(priceValue);
+            document.getElementById('totalProducts').textContent = totalProducts;
+            document.getElementById('totalImages').textContent = totalProducts;
+            document.getElementById('totalValue').textContent = '$' + formatCOP(totalValue);
 
-            if (!price || price <= 0) {
-                alert('Por favor ingresa un precio válido');
-                return;
-            }
-
-            const nameValue = document.getElementById('productName').value.trim();
-            const categoryValue = document.getElementById('productCategory').value;
-            const selectedSizes = getSelectedSizes();
-
-            if (!nameValue) {
-                alert('Por favor ingresa un nombre para el producto');
-                return;
-            }
-
-            if (!categoryValue) {
-                alert('Por favor selecciona una categoría');
-                return;
-            }
-
-            if (selectedSizes.length === 0) {
-                alert('Por favor selecciona al menos una talla');
-                return;
-            }
-
-            const productData = {
-                name: nameValue,
-                price: price,
-                category: categoryValue,
-                imageUrl: uploadedImageUrl,
-                sizes: selectedSizes,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            try {
-                const saveBtn = document.getElementById('saveBtn');
-                saveBtn.disabled = true;
-                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-
-                if (currentEditId) {
-                    await db.collection('products').doc(currentEditId).update(productData);
-                    alert('Producto actualizado exitosamente');
-                } else {
-                    productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('products').add(productData);
-                    alert('Producto creado exitosamente');
-                }
-                
-                closeProductModal();
-                loadProducts();
-                updateStats();
-                
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
-            } catch (error) {
-                console.error('Error al guardar:', error);
-                alert('Error al guardar el producto: ' + error.message);
-                
-                const saveBtn = document.getElementById('saveBtn');
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
-            }
-        });
-
-        // Load Products
-        async function loadProducts() {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '<p style="text-align: center; padding: 40px;">Cargando productos...</p>';
-
-            try {
-                const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
-                
-                if (snapshot.empty) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-shopping-bag"></i>
-                            <h3>No hay productos</h3>
-                            <p>Comienza agregando tu primer producto</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                container.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const product = doc.data();
-                    const card = createProductCard(doc.id, product);
-                    container.innerHTML += card;
-                });
-            } catch (error) {
-                console.error('Error al cargar productos:', error);
-                container.innerHTML = '<p style="text-align: center; color: #e74c3c;">Error al cargar productos</p>';
-            }
+            updateCategoryStats();
+        } catch (error) {
+            console.error('Error al actualizar estadísticas:', error);
         }
+    }
 
-        function createProductCard(id, product) {
-            const sizesHTML = product.sizes && product.sizes.length > 0 
-                ? `<div class="product-sizes">${product.sizes.map(size => `<span class="size-badge">${size}</span>`).join('')}</div>`
-                : '';
+    async function updateCategoryStats() {
+        try {
+            const snapshot = await db.collection('products').get();
+            const products = snapshot.docs.map(doc => doc.data());
 
-            return `
-                <div class="product-card-admin">
-                    <img src="${product.imageUrl}" alt="${product.name}" class="product-image-admin">
-                    <div class="product-info-admin">
-                        <span class="product-category-admin">${product.category}</span>
-                        <h3 class="product-title-admin">${product.name}</h3>
-                        <div class="product-price-admin">${formatCOP(product.price)}</div>
-                        ${sizesHTML}
-                        <div class="product-actions">
-                            <button class="btn-edit" onclick="openProductModal('${id}')">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            <button class="btn-delete" onclick="deleteProduct('${id}')">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            const sueter = products.filter(p => p.category === 'sueter').length;
+            const polo = products.filter(p => p.category === 'polo').length;
+            const jeans = products.filter(p => p.category === 'jeans').length;
+            const zapatos = products.filter(p => p.category === 'zapatos').length;
+            const accesorios = products.filter(p => p.category === 'accesorios').length;
+            const conjuntos = products.filter(p => p.category === 'conjuntos').length;
+
+            document.getElementById('sueterCount').textContent = sueter;
+            document.getElementById('poloCount').textContent = polo;
+            document.getElementById('jeansCount').textContent = jeans;
+            document.getElementById('zapatosCount').textContent = zapatos;
+            document.getElementById('accesoriosCount').textContent = accesorios;
+            document.getElementById('conjuntosCount').textContent = conjuntos;
+        } catch (error) {
+            console.error('Error:', error);
         }
+    }
 
-        // Delete Product
-        async function deleteProduct(productId) {
-            if (!confirm('¿Estás seguro de eliminar este producto?')) {
-                return;
-            }
-
-            try {
-                const doc = await db.collection('products').doc(productId).get();
-                const product = doc.data();
-
-                // Delete image from storage
-                if (product.imageUrl) {
-                    const imageRef = storage.refFromURL(product.imageUrl);
-                    await imageRef.delete().catch(err => console.log('Error al eliminar imagen:', err));
-                }
-
-                // Delete product
-                await db.collection('products').doc(productId).delete();
-                alert('Producto eliminado exitosamente');
-                loadProducts();
-                updateStats();
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al eliminar el producto');
-            }
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('productModal');
+        if (event.target === modal) {
+            closeProductModal();
         }
+    }
+</script>
+<body>
+    </html>
 
-        // Update Stats
-        async function updateStats() {
-            try {
-                const snapshot = await db.collection('products').get();
-                const products = snapshot.docs.map(doc => doc.data());
-
-                const totalProducts = products.length;
-                const totalValue = products.reduce((sum, p) => sum + (p.price || 0), 0);
-
-                document.getElementById('totalProducts').textContent = totalProducts;
-                document.getElementById('totalImages').textContent = totalProducts;
-                document.getElementById('totalValue').textContent = 
-                     + formatCOP(totalValue);
-
-                updateCategoryStats();
-            } catch (error) {
-                console.error('Error al actualizar estadísticas:', error);
-            }
-        }
-
-        async function updateCategoryStats() {
-            try {
-                const snapshot = await db.collection('products').get();
-                const products = snapshot.docs.map(doc => doc.data());
-
-                const sueter = products.filter(p => p.category === 'sueter').length;
-                const polo = products.filter(p => p.category === 'polo').length;
-                const jeans = products.filter(p => p.category === 'jeans').length;
-                const zapatos = products.filter(p => p.category === 'zapatos').length;
-                const accesorios = products.filter(p => p.category === 'accesorios').length;
-
-                document.getElementById('sueterCount').textContent = sueter;
-                document.getElementById('poloCount').textContent = polo;
-                document.getElementById('jeansCount').textContent = jeans;
-                document.getElementById('zapatosCount').textContent = zapatos;
-                document.getElementById('accesoriosCount').textContent = accesorios;
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('productModal');
-            if (event.target === modal) {
-                closeProductModal();
-            }
-        }
-    </script>
-</body>
-</html>
